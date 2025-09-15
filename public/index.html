@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeopardy - Presenter View</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="presenter-view">
+  <div id="app">
+    <header class="game-header">
+      <h1>JEOPARDY!</h1>
+      <div class="header-controls">
+        <button id="upload-btn" class="control-btn">Upload Questions</button>
+        <button id="qr-btn" class="control-btn">Show QR Code</button>
+        <button id="final-jeopardy-btn" class="control-btn">Final Jeopardy</button>
+        <button id="reset-btn" class="control-btn">Reset Game</button>
+        <button id="sound-toggle" class="control-btn">🔊 Sound</button>
+      </div>
+    </header>
+
+    <div id="qr-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Players Join Here</h2>
+        <div id="qr-code"></div>
+        <p id="join-url"></p>
+      </div>
+    </div>
+
+    <div id="upload-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Upload Questions CSV</h2>
+        <input type="file" id="csv-file" accept=".csv">
+        <button id="upload-submit">Upload</button>
+        <div id="upload-status"></div>
+      </div>
+    </div>
+
+    <div id="question-modal" class="modal">
+      <div class="modal-content question-display">
+        <div id="question-category"></div>
+        <div id="question-value"></div>
+        <div id="question-text"></div>
+        <div id="question-answer" class="hidden"></div>
+        <div id="timer-display">30</div>
+        <div id="buzz-queue"></div>
+        <div class="question-controls">
+          <button id="show-answer" class="control-btn">Show Answer</button>
+          <button id="correct-answer" class="control-btn">Correct</button>
+          <button id="incorrect-answer" class="control-btn">Incorrect</button>
+          <button id="close-question" class="control-btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="final-jeopardy-modal" class="modal">
+      <div class="modal-content">
+        <h2>Final Jeopardy</h2>
+        <div id="final-category"></div>
+        <div id="final-question" class="hidden"></div>
+        <div id="final-wagers"></div>
+        <div id="final-answers"></div>
+        <button id="reveal-final-question" class="control-btn">Reveal Question</button>
+        <button id="start-final-timer" class="control-btn hidden">Start Timer</button>
+      </div>
+    </div>
+
+    <main class="game-container">
+      <div id="game-board" class="game-board">
+        <div class="loading-message">
+          <h2>Welcome to Jeopardy!</h2>
+          <p>Please upload questions to start the game</p>
+          <button class="control-btn" onclick="loadDefaultQuestions()">Load Sample Questions</button>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="players-section">
+          <h3>Players (<span id="player-count">0</span>)</h3>
+          <div id="players-list"></div>
+        </div>
+
+        <div class="scores-section">
+          <h3>Leaderboard</h3>
+          <div id="scores-list"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="sounds.js"></script>
+  <script src="presenter.js"></script>
+</body>
+</html>

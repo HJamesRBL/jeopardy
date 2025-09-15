@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeopardy - Player View</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="player-view">
+  <div class="player-container">
+    <h1>JEOPARDY!</h1>
+
+    <div id="join-screen" class="join-form">
+      <h2>Join Game</h2>
+      <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+      <button id="join-btn" class="control-btn">Join Game</button>
+      <div id="join-error" style="color: #ff0000; margin-top: 10px;"></div>
+    </div>
+
+    <div id="game-screen" class="hidden">
+      <div class="player-info">
+        <h2 id="player-display-name"></h2>
+        <div class="player-score">Score: $<span id="player-score">0</span></div>
+      </div>
+
+      <div id="buzzer-container">
+        <button id="buzzer" class="buzzer-btn">BUZZ IN!</button>
+        <div id="buzz-status" style="margin-top: 20px; font-size: 1.2em;"></div>
+      </div>
+
+      <div id="question-display" class="hidden" style="margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+        <h3 id="current-category"></h3>
+        <div id="current-value" style="font-size: 1.5em; color: #FFD700;"></div>
+        <div id="current-question" style="font-size: 1.3em; margin: 20px 0;"></div>
+      </div>
+
+      <div id="final-jeopardy-container" class="hidden">
+        <div class="final-jeopardy-input">
+          <h2>Final Jeopardy</h2>
+          <div id="final-category" style="font-size: 1.3em; color: #FFD700; margin: 20px 0;"></div>
+
+          <div id="wager-section">
+            <p>Your Score: $<span id="final-score">0</span></p>
+            <label for="wager-input">Enter your wager:</label>
+            <input type="number" id="wager-input" min="0" placeholder="Wager amount">
+            <button id="submit-wager" class="control-btn">Submit Wager</button>
+          </div>
+
+          <div id="answer-section" class="hidden">
+            <div id="final-question-text" style="font-size: 1.3em; margin: 20px 0;"></div>
+            <textarea id="final-answer" placeholder="Enter your answer"></textarea>
+            <button id="submit-answer" class="control-btn">Submit Answer</button>
+            <div id="final-timer" style="font-size: 2em; color: #FFD700; margin: 20px 0;"></div>
+          </div>
+
+          <div id="waiting-section" class="hidden">
+            <p style="font-size: 1.3em;">Waiting for other players...</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="game-over-screen" class="hidden" style="text-align: center; padding: 30px;">
+        <h2>Game Over!</h2>
+        <div id="final-results" style="margin: 30px 0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="sounds.js"></script>
+  <script src="player.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+Category,Points,Question,Answer,IsDaily
+Science & Nature,200,This planet is known as the Red Planet,What is Mars?,false
+Science & Nature,400,The chemical symbol for gold,What is Au?,false
+Science & Nature,600,The number of bones in an adult human body,What is 206?,false
+Science & Nature,800,The scientist who developed the theory of evolution by natural selection,Who is Charles Darwin?,true
+Science & Nature,1000,The speed of light in a vacuum in meters per second,What is 299792458 m/s?,false
+World History,200,The year Christopher Columbus first arrived in the Americas,What is 1492?,false
+World History,400,The first President of the United States,Who is George Washington?,false
+World History,600,The ancient wonder of the world that still stands today,What are the Great Pyramids of Giza?,false
+World History,800,The year World War II ended,What is 1945?,false
+World History,1000,The empire that built Machu Picchu,What is the Inca Empire?,false
+Geography,200,The capital of France,What is Paris?,false
+Geography,400,The longest river in the world,What is the Nile River?,false
+Geography,600,The number of continents on Earth,What is 7?,false
+Geography,800,The smallest country in the world by area,What is Vatican City?,false
+Geography,1000,The deepest point in the Earth's oceans,What is the Mariana Trench?,false
+Technology,200,This acronym CPU stands for,What is Central Processing Unit?,false
+Technology,400,The company that created the iPhone,What is Apple?,false
+Technology,600,The programming language created by Guido van Rossum in 1991,What is Python?,false
+Technology,800,The year Facebook was founded,What is 2004?,true
+Technology,1000,The inventor of the World Wide Web,Who is Tim Berners-Lee?,false
+Literature & Arts,200,The author of Romeo and Juliet,Who is William Shakespeare?,false
+Literature & Arts,400,The boy wizard created by J.K. Rowling,Who is Harry Potter?,false
+Literature & Arts,600,The author of the dystopian novel 1984,Who is George Orwell?,false
+Literature & Arts,800,The epic poem by Homer about the fall of Troy,What is The Iliad?,false
+Literature & Arts,1000,The Russian author of War and Peace,Who is Leo Tolstoy?,false
+Pop Culture,200,The highest-grossing film of all time not adjusted for inflation,What is Avatar (2009)?,false
+Pop Culture,400,The streaming service that produced Stranger Things,What is Netflix?,false
+Pop Culture,600,The artist known as The King of Pop,Who is Michael Jackson?,false
+Pop Culture,800,The year the first Star Wars movie was released,What is 1977?,false
+Pop Culture,1000,The longtime host of Jeopardy! from 1984 to 2020,Who is Alex Trebek?,false
+Final Jeopardy,0,This programming language was created by Brendan Eich in just 10 days in May 1995 while working at Netscape,What is JavaScript?,false

@@ -1,0 +1,235 @@
+const express = require('express');
+const http = require('http');
+const socketIO = require('socket.io');
+const path = require('path');
+const multer = require('multer');
+const QRCode = require('qrcode');
+require('dotenv').config();
+
+const GameManager = require('./gameManager');
+const QuestionLoader = require('./questionLoader');
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+
+const upload = multer({ dest: 'uploads/' });
+
+const gameManager = new GameManager(io);
+
+app.use(express.static('public'));
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+app.get('/player', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/player.html'));
+});
+
+app.get('/qrcode', async (req, res) => {
+  try {
+    const host = req.get('host');
+    const protocol = req.protocol;
+    const playerUrl = `${protocol}://${host}/player`;
+    const qrCodeDataUrl = await QRCode.toDataURL(playerUrl, {
+      width: 300,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
+    });
+    res.json({ qrCode: qrCodeDataUrl, url: playerUrl });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate QR code' });
+  }
+});
+
+app.post('/upload-questions', upload.single('questions'), async (req, res) => {
+  try {
+    let questions;
+
+    if (req.body.useDefault) {
+      questions = QuestionLoader.loadDefaultQuestions();
+    } else if (req.file) {
+      questions = await QuestionLoader.loadFromCSV(req.file.path);
+    } else {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    gameManager.loadQuestions(questions);
+
+    res.json({
+      success: true,
+      message: `Loaded ${questions.length} questions`,
+      categories: gameManager.getCategories()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('New connection:', socket.id);
+
+  socket.on('presenter-connect', () => {
+    gameManager.setPresenter(socket.id);
+    socket.emit('game-state', gameManager.getGameState());
+    socket.emit('players-update', gameManager.getPlayers());
+  });
+
+  socket.on('player-join', (playerName) => {
+    const player = gameManager.addPlayer(socket.id, playerName);
+    if (player) {
+      socket.emit('player-joined', player);
+      io.emit('players-update', gameManager.getPlayers());
+      if (gameManager.presenterId) {
+        io.to(gameManager.presenterId).emit('player-connected', player);
+      }
+    } else {
+      socket.emit('join-error', 'Game is full or invalid name');
+    }
+  });
+
+  socket.on('select-question', (data) => {
+    if (socket.id === gameManager.presenterId) {
+      const question = gameManager.selectQuestion(data.category, data.value);
+      if (question) {
+        io.emit('question-selected', question);
+        // Timer now starts only when someone buzzes in
+      }
+    }
+  });
+
+  socket.on('buzz', () => {
+    const buzzTime = gameManager.recordBuzz(socket.id);
+    if (buzzTime) {
+      io.emit('buzz-received', {
+        playerId: socket.id,
+        playerName: gameManager.getPlayer(socket.id)?.name,
+        timestamp: buzzTime,
+        position: gameManager.getBuzzQueue().length
+      });
+    }
+  });
+
+  socket.on('answer-response', (data) => {
+    if (socket.id === gameManager.presenterId) {
+      const { playerId, correct } = data;
+      const points = gameManager.processAnswer(playerId, correct);
+
+      io.emit('answer-processed', {
+        playerId,
+        correct,
+        points,
+        scores: gameManager.getScores()
+      });
+
+      if (!correct && gameManager.getBuzzQueue().length > 0) {
+        const nextPlayer = gameManager.getNextBuzzer();
+        if (nextPlayer) {
+          io.emit('next-player-to-answer', nextPlayer);
+          // Start timer for the next player who already buzzed
+          gameManager.startAnswerTimer();
+        }
+      } else if (!correct && gameManager.currentQuestion) {
+        // Wrong answer and no one else in queue - reopen buzzing
+        io.emit('reopen-buzzing');
+      } else {
+        gameManager.clearBuzzQueue();
+        io.emit('question-complete');
+      }
+    }
+  });
+
+  socket.on('adjust-score', (data) => {
+    if (socket.id === gameManager.presenterId) {
+      const { playerId, points } = data;
+      gameManager.adjustScore(playerId, points);
+      io.emit('scores-updated', gameManager.getScores());
+    }
+  });
+
+  socket.on('start-final-jeopardy', () => {
+    if (socket.id === gameManager.presenterId) {
+      gameManager.startFinalJeopardy();
+      io.emit('final-jeopardy-started', gameManager.getFinalJeopardyState());
+    }
+  });
+
+  socket.on('final-jeopardy-wager', (data) => {
+    const { wager } = data;
+    if (gameManager.submitWager(socket.id, wager)) {
+      socket.emit('wager-accepted', wager);
+
+      if (gameManager.allWagersSubmitted()) {
+        io.emit('all-wagers-submitted');
+      }
+    } else {
+      socket.emit('wager-error', 'Invalid wager amount');
+    }
+  });
+
+  socket.on('final-jeopardy-answer', (data) => {
+    const { answer } = data;
+    if (gameManager.submitFinalAnswer(socket.id, answer)) {
+      socket.emit('answer-submitted');
+
+      if (gameManager.allAnswersSubmitted()) {
+        if (gameManager.presenterId) {
+          io.to(gameManager.presenterId).emit('review-final-answers',
+            gameManager.getFinalAnswers());
+        }
+      }
+    }
+  });
+
+  socket.on('grade-final-answer', (data) => {
+    if (socket.id === gameManager.presenterId) {
+      const { playerId, correct } = data;
+      gameManager.gradeFinalAnswer(playerId, correct);
+
+      if (gameManager.allAnswersGraded()) {
+        const finalScores = gameManager.calculateFinalScores();
+        io.emit('game-over', finalScores);
+      }
+    }
+  });
+
+  socket.on('reset-game', () => {
+    if (socket.id === gameManager.presenterId) {
+      gameManager.resetGame();
+      io.emit('game-reset');
+      io.emit('game-state', gameManager.getGameState());
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Disconnected:', socket.id);
+
+    if (socket.id === gameManager.presenterId) {
+      gameManager.presenterDisconnected();
+    } else {
+      const player = gameManager.removePlayer(socket.id);
+      if (player) {
+        io.emit('player-disconnected', player);
+        io.emit('players-update', gameManager.getPlayers());
+      }
+    }
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Jeopardy game server running on port ${PORT}`);
+  console.log(`Presenter view: http://localhost:${PORT}`);
+  console.log(`Player view: http://localhost:${PORT}/player`);
+});
