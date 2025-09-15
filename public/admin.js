@@ -18,7 +18,7 @@ function setupEventListeners() {
   // Dashboard
   document.getElementById('refresh-btn').addEventListener('click', refreshStats);
   document.getElementById('logout-btn').addEventListener('click', logout);
-  document.getElementById('create-game-btn').addEventListener('click', createNewGame);
+  document.getElementById('create-game-btn').addEventListener('click', showCreateGameModal);
   document.getElementById('upload-questions-btn').addEventListener('click', showUploadModal);
 
   // Modals
@@ -27,8 +27,9 @@ function setupEventListeners() {
   document.getElementById('upload-cancel').addEventListener('click', closeUploadModal);
   document.getElementById('upload-submit').addEventListener('click', uploadQuestions);
   document.getElementById('use-default-btn').addEventListener('click', useDefaultQuestions);
-  document.getElementById('close-created-modal').addEventListener('click', closeCreatedModal);
-  document.getElementById('launch-game-btn').addEventListener('click', launchGame);
+  document.getElementById('cancel-create-game').addEventListener('click', closeCreateGameModal);
+  document.getElementById('launch-new-game').addEventListener('click', launchNewGame);
+  document.getElementById('use-default-new-game').addEventListener('click', selectDefaultQuestions);
 }
 
 async function login() {
@@ -127,10 +128,14 @@ function updateDashboard(stats) {
   gamesContainer.innerHTML = stats.games.map(game => `
     <div class="game-card">
       <div class="game-header">
-        <h3>Game ${game.code}</h3>
+        <h3>${game.name}</h3>
         <span class="game-status ${getStatusClass(game.status)}">${game.status}</span>
       </div>
       <div class="game-info">
+        <div class="info-row">
+          <span class="info-label">Code:</span>
+          <span style="font-weight: bold; color: #19A9FF;">${game.code}</span>
+        </div>
         <div class="info-row">
           <span class="info-label">Created:</span>
           <span>${game.created}</span>
@@ -236,29 +241,103 @@ function logout() {
   document.getElementById('admin-password').value = '';
 }
 
-function createNewGame() {
-  socket.emit('admin-create-game', { password: adminPassword });
-}
-
 let newGameCode = null;
-socket.on('game-created-admin', (data) => {
-  newGameCode = data.gameCode;
-  document.getElementById('new-game-code').textContent = data.gameCode;
-  document.getElementById('game-created-modal').classList.remove('hidden');
-  refreshStats();
-});
+let questionsReady = false;
 
-function closeCreatedModal() {
-  document.getElementById('game-created-modal').classList.add('hidden');
+function showCreateGameModal() {
+  document.getElementById('create-game-modal').classList.remove('hidden');
+  document.getElementById('game-name').value = '';
+  document.getElementById('new-game-csv-file').value = '';
+  document.getElementById('create-game-status').textContent = '';
+  document.getElementById('launch-new-game').disabled = true;
+  questionsReady = false;
   newGameCode = null;
 }
 
-function launchGame() {
-  if (newGameCode) {
-    window.open(`/?game=${newGameCode}`, '_blank');
-    closeCreatedModal();
-  }
+function closeCreateGameModal() {
+  document.getElementById('create-game-modal').classList.add('hidden');
+  newGameCode = null;
+  questionsReady = false;
 }
+
+function selectDefaultQuestions() {
+  questionsReady = true;
+  document.getElementById('new-game-csv-file').value = '';
+  document.getElementById('create-game-status').textContent = 'Sample questions selected';
+  checkReadyToLaunch();
+}
+
+function checkReadyToLaunch() {
+  const gameName = document.getElementById('game-name').value.trim();
+  const hasFile = document.getElementById('new-game-csv-file').files.length > 0;
+  const ready = gameName && (questionsReady || hasFile);
+  document.getElementById('launch-new-game').disabled = !ready;
+}
+
+// Listen for file selection
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('new-game-csv-file').addEventListener('change', (e) => {
+    questionsReady = e.target.files.length > 0;
+    if (questionsReady) {
+      document.getElementById('create-game-status').textContent = 'File selected: ' + e.target.files[0].name;
+    }
+    checkReadyToLaunch();
+  });
+
+  document.getElementById('game-name').addEventListener('input', checkReadyToLaunch);
+});
+
+async function launchNewGame() {
+  const gameName = document.getElementById('game-name').value.trim();
+  if (!gameName) {
+    document.getElementById('create-game-status').textContent = 'Please enter a game name';
+    return;
+  }
+
+  // First create the game
+  document.getElementById('create-game-status').textContent = 'Creating game...';
+
+  // Create game with custom name
+  socket.emit('admin-create-game', { password: adminPassword, gameName });
+}
+
+socket.on('game-created-admin', async (data) => {
+  newGameCode = data.gameCode;
+  document.getElementById('create-game-status').textContent = `Game created: ${newGameCode}. Uploading questions...`;
+
+  // Now upload questions
+  const fileInput = document.getElementById('new-game-csv-file');
+  const formData = new FormData();
+  formData.append('gameCode', newGameCode);
+
+  if (fileInput.files[0]) {
+    formData.append('questions', fileInput.files[0]);
+  } else {
+    formData.append('useDefault', 'true');
+  }
+
+  try {
+    const response = await fetch('/upload-questions', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      document.getElementById('create-game-status').textContent = 'Game ready! Launching...';
+      setTimeout(() => {
+        window.open(`/?game=${newGameCode}`, '_blank');
+        closeCreateGameModal();
+        refreshStats();
+      }, 1000);
+    } else {
+      document.getElementById('create-game-status').textContent = `Error: ${result.error}`;
+    }
+  } catch (error) {
+    document.getElementById('create-game-status').textContent = `Error: ${error.message}`;
+  }
+});
 
 function launchPresenter(gameCode) {
   window.open(`/?game=${gameCode}`, '_blank');

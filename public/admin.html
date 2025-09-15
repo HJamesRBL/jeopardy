@@ -89,17 +89,22 @@
       </div>
     </div>
 
-    <div id="game-created-modal" class="modal hidden">
-      <div class="modal-content" style="text-align: center;">
-        <h3 style="color: #5ec4b6;">Game Created Successfully!</h3>
-        <div style="margin: 30px 0;">
-          <p style="font-size: 1.2em;">Game Code:</p>
-          <div id="new-game-code" style="font-size: 3em; font-weight: bold; color: #19A9FF; letter-spacing: 4px; margin: 20px 0;"></div>
+    <div id="create-game-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Create New Game</h3>
+        <div style="margin: 20px 0;">
+          <label for="game-name" style="display: block; margin-bottom: 10px; color: #a8c7e7;">Game Name:</label>
+          <input type="text" id="game-name" placeholder="Enter game name (e.g., Workshop Session 1)" style="width: 100%; padding: 10px; background: #151935; border: 2px solid #19A9FF; border-radius: 8px; color: white; font-size: 1.1em;">
         </div>
-        <p>Share this code with players or launch the presenter view</p>
-        <div class="modal-actions" style="justify-content: center;">
-          <button id="launch-game-btn" class="btn-primary">🚀 Launch Game</button>
-          <button id="close-created-modal" class="btn-secondary">Close</button>
+        <div style="margin: 20px 0;">
+          <label style="display: block; margin-bottom: 10px; color: #a8c7e7;">Questions:</label>
+          <input type="file" id="new-game-csv-file" accept=".csv" style="margin-bottom: 10px;">
+          <button id="use-default-new-game" class="btn-secondary" style="width: 100%;">Use Sample Questions</button>
+        </div>
+        <div id="create-game-status" style="margin-top: 20px; color: #19A9FF;"></div>
+        <div class="modal-actions">
+          <button id="launch-new-game" class="btn-primary" disabled>🚀 Launch New Game</button>
+          <button id="cancel-create-game" class="btn-secondary">Cancel</button>
         </div>
       </div>
     </div>

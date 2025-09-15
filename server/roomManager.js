@@ -11,36 +11,58 @@ class RoomManager {
     this.startCleanupInterval();
   }
 
-  generateGameCode() {
-    // Generate a 6-character code like "RBL123"
-    const prefix = 'RBL';
-    const numbers = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    const code = prefix + numbers;
+  generateGameCode(customName = null) {
+    if (customName) {
+      // Sanitize custom name to create a code
+      let code = customName.toUpperCase()
+        .replace(/[^A-Z0-9]/g, '') // Remove special characters
+        .substring(0, 10); // Limit length
 
-    // Ensure uniqueness
-    if (this.rooms.has(code)) {
-      return this.generateGameCode();
+      // If code is too short or already exists, add numbers
+      if (code.length < 3 || this.rooms.has(code)) {
+        const suffix = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+        code = (code || 'GAME') + suffix;
+      }
+
+      // Ensure uniqueness
+      while (this.rooms.has(code)) {
+        const suffix = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+        code = code.substring(0, 8) + suffix;
+      }
+
+      return code;
+    } else {
+      // Generate a random code like "RBL123"
+      const prefix = 'RBL';
+      const numbers = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      const code = prefix + numbers;
+
+      // Ensure uniqueness
+      if (this.rooms.has(code)) {
+        return this.generateGameCode();
+      }
+
+      return code;
     }
-
-    return code;
   }
 
-  createRoom(presenterId) {
+  createRoom(presenterId, customName = null) {
     if (this.rooms.size >= this.maxRooms) {
       throw new Error('Maximum number of rooms reached');
     }
 
-    const gameCode = this.generateGameCode();
+    const gameCode = this.generateGameCode(customName);
     const gameManager = new GameManager(this.io, gameCode);
 
     this.rooms.set(gameCode, {
       gameManager,
       createdAt: Date.now(),
       lastActivity: Date.now(),
-      presenterId
+      presenterId,
+      gameName: customName || gameCode
     });
 
-    console.log(`Created new game room: ${gameCode}`);
+    console.log(`Created new game room: ${gameCode} (${customName || 'auto-generated'})`);
     return { gameCode, gameManager };
   }
 
@@ -81,6 +103,7 @@ class RoomManager {
       const game = room.gameManager;
       stats.games.push({
         code,
+        name: room.gameName || code,
         created: new Date(room.createdAt).toLocaleString(),
         lastActivity: new Date(room.lastActivity).toLocaleString(),
         hoursActive: Math.floor((now - room.createdAt) / (1000 * 60 * 60)),

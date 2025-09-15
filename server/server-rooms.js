@@ -399,13 +399,13 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('admin-create-game', ({ password }) => {
+  socket.on('admin-create-game', ({ password, gameName }) => {
     if (password === ADMIN_PASSWORD) {
       try {
-        const { gameCode, gameManager } = roomManager.createRoom('admin');
-        socket.emit('game-created-admin', { gameCode });
+        const { gameCode, gameManager } = roomManager.createRoom('admin', gameName);
+        socket.emit('game-created-admin', { gameCode, gameName });
         io.to('admin-room').emit('admin-stats', roomManager.getAdminStats());
-        console.log(`Admin created game: ${gameCode}`);
+        console.log(`Admin created game: ${gameCode} (${gameName || 'auto'})`);
       } catch (error) {
         socket.emit('error', error.message);
       }

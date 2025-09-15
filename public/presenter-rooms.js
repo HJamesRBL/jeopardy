@@ -157,29 +157,11 @@ function showNoGameMessage() {
 }
 
 function showGameCode() {
-  if (!gameCode) return;
-
-  // Add game code display if not exists
-  let codeDisplay = document.getElementById('game-code-display');
-  if (!codeDisplay) {
-    codeDisplay = document.createElement('div');
-    codeDisplay.id = 'game-code-display';
-    codeDisplay.style.cssText = `
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: linear-gradient(135deg, #0086D6 0%, #19A9FF 100%);
-      color: white;
-      padding: 15px 25px;
-      border-radius: 10px;
-      font-size: 1.5em;
-      font-weight: bold;
-      z-index: 1000;
-      box-shadow: 0 10px 30px rgba(0, 134, 214, 0.3);
-    `;
-    document.body.appendChild(codeDisplay);
+  // Remove the game code display - no longer needed
+  const existingDisplay = document.getElementById('game-code-display');
+  if (existingDisplay) {
+    existingDisplay.remove();
   }
-  codeDisplay.innerHTML = `Game Code: <span style="letter-spacing: 2px;">${gameCode}</span>`;
 }
 
 function setupEventListeners() {
