@@ -115,6 +115,7 @@ function setupEventListeners() {
   document.getElementById('qr-btn').addEventListener('click', showQRModal);
   document.getElementById('final-jeopardy-btn').addEventListener('click', startFinalJeopardy);
   document.getElementById('reset-btn').addEventListener('click', resetGame);
+  document.getElementById('game-mode-btn').addEventListener('click', toggleGameMode);
   document.getElementById('sound-toggle').addEventListener('click', () => {
     const enabled = soundManager.toggle();
     document.getElementById('sound-toggle').textContent = enabled ? '🔊 Sound' : '🔇 Sound';
@@ -425,3 +426,79 @@ function showNotification(message) {
     setTimeout(() => notification.remove(), 300);
   }, 3000);
 }
+
+function toggleGameMode() {
+  const body = document.body;
+  const isFullscreen = body.classList.contains('fullscreen-mode');
+
+  if (!isFullscreen) {
+    // Enter fullscreen mode
+    body.classList.add('fullscreen-mode');
+
+    // Try to enter browser fullscreen
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen();
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen();
+    }
+
+    // Show exit hint
+    const hint = document.querySelector('.fullscreen-hint');
+    if (hint) {
+      hint.style.animation = 'none';
+      setTimeout(() => {
+        hint.style.animation = 'fadeInOut 5s ease-in-out';
+      }, 10);
+    }
+  } else {
+    // Exit fullscreen mode
+    exitGameMode();
+  }
+}
+
+function exitGameMode() {
+  document.body.classList.remove('fullscreen-mode');
+
+  // Exit browser fullscreen
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // F key toggles fullscreen
+  if (e.key === 'f' || e.key === 'F') {
+    // Don't toggle if user is typing in an input
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      toggleGameMode();
+    }
+  }
+
+  // ESC key exits fullscreen
+  if (e.key === 'Escape') {
+    if (document.body.classList.contains('fullscreen-mode')) {
+      exitGameMode();
+    }
+  }
+});
+
+// Handle browser fullscreen changes
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    document.body.classList.remove('fullscreen-mode');
+  }
+});
+
+document.addEventListener('webkitfullscreenchange', () => {
+  if (!document.webkitFullscreenElement) {
+    document.body.classList.remove('fullscreen-mode');
+  }
+});
