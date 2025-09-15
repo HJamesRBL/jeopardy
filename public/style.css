@@ -1,19 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap');
 
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --success-gradient: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
-  --gold-gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  --dark-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  /* RBL Brand Colors */
+  --rbl-navy: #071D49;
+  --rbl-blue: #0086D6;
+  --rbl-bright-blue: #19A9FF;
+  --rbl-green: #008884;
+  --rbl-bright-green: #5ec4b6;
+  --rbl-red: #ed1b34;
 
-  --bg-primary: #0a0e27;
-  --bg-secondary: #151935;
-  --bg-tertiary: #1e2444;
+  /* Gradients using RBL colors */
+  --primary-gradient: linear-gradient(135deg, #0086D6 0%, #19A9FF 100%);
+  --secondary-gradient: linear-gradient(135deg, #008884 0%, #5ec4b6 100%);
+  --success-gradient: linear-gradient(135deg, #008884 0%, #5ec4b6 100%);
+  --gold-gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  --dark-gradient: linear-gradient(135deg, #071D49 0%, #0086D6 20%, #071D49 100%);
+
+  /* Background colors using RBL Navy */
+  --bg-primary: #071D49;
+  --bg-secondary: #0a2454;
+  --bg-tertiary: #0d3160;
 
   --text-primary: #ffffff;
-  --text-secondary: #a8b2d1;
-  --text-accent: #64ffda;
+  --text-secondary: #a8c7e7;
+  --text-accent: #19A9FF;
 
   --border-color: rgba(100, 255, 218, 0.1);
   --shadow-color: rgba(0, 0, 0, 0.5);
@@ -41,7 +51,7 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
@@ -57,9 +67,9 @@ body::before {
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(circle at 20% 80%, rgba(100, 126, 234, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(245, 87, 108, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(100, 255, 218, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(0, 134, 214, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(25, 169, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(0, 136, 132, 0.05) 0%, transparent 50%);
   pointer-events: none;
   z-index: 1;
 }
@@ -92,7 +102,8 @@ body::before {
 }
 
 .game-header h1 {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 800;
   font-size: clamp(2.5rem, 6vw, 4rem);
   background: var(--gold-gradient);
   -webkit-background-clip: text;
@@ -123,9 +134,9 @@ body::before {
 }
 
 .control-btn {
-  background: linear-gradient(135deg, rgba(100, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(0, 134, 214, 0.1) 0%, rgba(25, 169, 255, 0.1) 100%);
   color: var(--text-primary);
-  border: 1px solid rgba(100, 126, 234, 0.3);
+  border: 1px solid rgba(0, 134, 214, 0.3);
   padding: var(--spacing-sm) var(--spacing-lg);
   font-size: 0.9rem;
   font-weight: 600;
@@ -146,16 +157,16 @@ body::before {
   left: 50%;
   width: 0;
   height: 0;
-  background: radial-gradient(circle, rgba(100, 255, 218, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(25, 169, 255, 0.3) 0%, transparent 70%);
   transition: width 0.6s, height 0.6s;
   transform: translate(-50%, -50%);
 }
 
 .control-btn:hover {
-  background: linear-gradient(135deg, rgba(100, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(0, 134, 214, 0.2) 0%, rgba(25, 169, 255, 0.2) 100%);
   border-color: var(--text-accent);
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(100, 126, 234, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 134, 214, 0.3);
 }
 
 .control-btn:hover::before {
@@ -218,30 +229,31 @@ body::before {
 }
 
 .category-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0086D6 0%, #19A9FF 100%);
   padding: var(--spacing-sm) var(--spacing-xs);
   text-align: center;
-  font-size: 1rem; /* Default size, will be adjusted by JS */
+  font-size: 0.9rem; /* Readable default size */
   font-weight: 700;
   border-radius: var(--radius-md);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 134, 214, 0.3);
   position: relative;
   overflow: hidden;
   animation: categorySlide 0.6s ease-out backwards;
-  white-space: nowrap; /* Prevent wrapping initially for measurement */
+  white-space: normal; /* Allow natural wrapping */
+  word-break: normal; /* Only break between words */
+  word-wrap: break-word; /* Wrap long words if needed */
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 80px;
-  line-height: 1.2;
+  line-height: 1.3;
   transition: font-size 0.2s ease;
 }
 
 .category-header.adjusted {
-  white-space: normal; /* Allow wrapping after adjustment if needed */
-  word-break: break-word;
+  /* Keep the same settings */
 }
 
 .category-header:nth-child(1) { animation-delay: 0.1s; }
@@ -284,8 +296,8 @@ body::before {
 }
 
 .question-cell {
-  background: linear-gradient(135deg, rgba(100, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-  border: 1px solid rgba(100, 126, 234, 0.3);
+  background: linear-gradient(135deg, rgba(0, 134, 214, 0.15) 0%, rgba(25, 169, 255, 0.15) 100%);
+  border: 1px solid rgba(0, 134, 214, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -333,9 +345,9 @@ body::before {
 
 .question-cell:hover:not(.used) {
   transform: translateY(-4px) scale(1.05);
-  background: linear-gradient(135deg, rgba(100, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%);
+  background: linear-gradient(135deg, rgba(0, 134, 214, 0.25) 0%, rgba(25, 169, 255, 0.25) 100%);
   border-color: var(--text-accent);
-  box-shadow: 0 15px 40px rgba(100, 126, 234, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 134, 214, 0.4);
 }
 
 .question-cell:hover:not(.used)::before {
@@ -422,12 +434,12 @@ body::before {
 .player-item, .score-item {
   padding: var(--spacing-sm) var(--spacing-md);
   margin: var(--spacing-xs) 0;
-  background: linear-gradient(135deg, rgba(100, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(0, 134, 214, 0.1) 0%, rgba(25, 169, 255, 0.1) 100%);
   border-radius: var(--radius-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid rgba(100, 126, 234, 0.2);
+  border: 1px solid rgba(0, 134, 214, 0.2);
   transition: all var(--transition-fast);
   animation: slideInLeft 0.3s ease-out backwards;
 }
@@ -462,7 +474,7 @@ body::before {
 }
 
 .player-item:hover, .score-item:hover {
-  background: linear-gradient(135deg, rgba(100, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(0, 134, 214, 0.2) 0%, rgba(25, 169, 255, 0.2) 100%);
   transform: translateX(4px);
   border-color: var(--text-accent);
 }
@@ -471,8 +483,8 @@ body::before {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #00ff88;
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  background: #5ec4b6;
+  box-shadow: 0 0 10px rgba(94, 196, 182, 0.5);
   animation: pulse 2s infinite;
 }
 
@@ -653,12 +665,12 @@ body::before {
 #question-answer {
   font-size: 1.8rem;
   font-weight: 600;
-  color: #00ff88;
+  color: #5ec4b6;
   margin: var(--spacing-lg);
   padding: var(--spacing-lg);
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(150, 201, 61, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(0, 136, 132, 0.1) 0%, rgba(94, 196, 182, 0.1) 100%);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(0, 255, 136, 0.3);
+  border: 1px solid rgba(94, 196, 182, 0.3);
   animation: answerReveal 0.5s ease-out;
 }
 
@@ -680,7 +692,7 @@ body::before {
   font-size: 3rem;
   font-weight: 800;
   color: var(--text-accent);
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   animation: timerPulse 1s infinite;
 }
 
@@ -712,10 +724,10 @@ body::before {
 #buzz-queue {
   margin: var(--spacing-lg);
   padding: var(--spacing-lg);
-  background: linear-gradient(135deg, rgba(100, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(0, 134, 214, 0.1) 0%, rgba(25, 169, 255, 0.1) 100%);
   border-radius: var(--radius-md);
   min-height: 120px;
-  border: 1px solid rgba(100, 126, 234, 0.2);
+  border: 1px solid rgba(0, 134, 214, 0.2);
 }
 
 .buzz-item {
@@ -809,9 +821,9 @@ body::before {
   margin-top: var(--spacing-lg);
   word-break: break-all;
   padding: var(--spacing-md);
-  background: rgba(100, 255, 218, 0.1);
+  background: rgba(25, 169, 255, 0.1);
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(100, 255, 218, 0.3);
+  border: 1px solid rgba(25, 169, 255, 0.3);
 }
 
 .hidden {
@@ -835,7 +847,8 @@ body::before {
 }
 
 .player-container h1 {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 800;
   font-size: clamp(3rem, 8vw, 5rem);
   background: var(--gold-gradient);
   -webkit-background-clip: text;
@@ -865,7 +878,7 @@ body::before {
   padding: var(--spacing-md);
   font-size: 1.1rem;
   margin: var(--spacing-md) 0;
-  border: 2px solid rgba(100, 126, 234, 0.3);
+  border: 2px solid rgba(0, 134, 214, 0.3);
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
@@ -875,15 +888,15 @@ body::before {
 .join-form input:focus {
   outline: none;
   border-color: var(--text-accent);
-  background: rgba(100, 255, 218, 0.05);
-  box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
+  background: rgba(25, 169, 255, 0.05);
+  box-shadow: 0 0 20px rgba(25, 169, 255, 0.2);
 }
 
 .buzzer-btn {
   width: min(80vw, 350px);
   height: min(80vw, 350px);
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ff6b6b 0%, #cc0000 100%);
+  background: radial-gradient(circle at 30% 30%, #ed1b34 0%, #cc0000 100%);
   border: 5px solid rgba(255, 255, 255, 0.2);
   color: white;
   font-size: 2.5rem;
@@ -925,7 +938,7 @@ body::before {
 }
 
 .buzzer-btn.buzzed {
-  background: radial-gradient(circle at 30% 30%, #00ff88 0%, #00cc66 100%);
+  background: radial-gradient(circle at 30% 30%, #5ec4b6 0%, #008884 100%);
   animation: buzzerSuccess 0.6s ease-out;
 }
 
@@ -975,7 +988,7 @@ body::before {
   padding: var(--spacing-md);
   font-size: 1.1rem;
   margin: var(--spacing-md) 0;
-  border: 2px solid rgba(100, 126, 234, 0.3);
+  border: 2px solid rgba(0, 134, 214, 0.3);
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
@@ -987,8 +1000,8 @@ body::before {
 .final-jeopardy-input textarea:focus {
   outline: none;
   border-color: var(--text-accent);
-  background: rgba(100, 255, 218, 0.05);
-  box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
+  background: rgba(25, 169, 255, 0.05);
+  box-shadow: 0 0 20px rgba(25, 169, 255, 0.2);
 }
 
 .final-jeopardy-input textarea {
@@ -1061,14 +1074,14 @@ body::before {
   position: fixed;
   top: var(--spacing-lg);
   right: var(--spacing-lg);
-  background: linear-gradient(135deg, rgba(100, 255, 218, 0.95) 0%, rgba(100, 126, 234, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(25, 169, 255, 0.95) 0%, rgba(0, 134, 214, 0.95) 100%);
   color: var(--bg-primary);
   padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-sm);
   font-weight: 600;
   z-index: 2000;
   animation: notificationSlide 0.3s ease-out;
-  box-shadow: 0 10px 30px rgba(100, 255, 218, 0.3);
+  box-shadow: 0 10px 30px rgba(25, 169, 255, 0.3);
 }
 
 @keyframes notificationSlide {

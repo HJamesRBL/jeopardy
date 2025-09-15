@@ -1,6 +1,6 @@
-# Jeopardy Game - Workshop Edition
+# RBL-pardy Game - Workshop Edition
 
-A fully-featured, real-time Jeopardy game designed for workshop presentations. Supports up to 50 simultaneous players with mobile-friendly buzzer system.
+A fully-featured, real-time RBL-pardy game designed for workshop presentations. Supports up to 50 simultaneous players with mobile-friendly buzzer system.
 
 ## Features
 
@@ -8,7 +8,7 @@ A fully-featured, real-time Jeopardy game designed for workshop presentations. S
 - **Mobile-friendly buzzer system** - Players use their phones to buzz in
 - **CSV question upload** - Easy question management without code changes
 - **Daily Doubles** - Automatically placed in random questions
-- **Final Jeopardy** - Complete with wagering system
+- **Final RBL-pardy** - Complete with wagering system
 - **Live scoring** - Real-time leaderboard updates
 - **Presenter controls** - Full game management interface
 
@@ -58,8 +58,8 @@ npm start
    - Use "Show Answer" to reveal the correct answer
    - Monitor the leaderboard on the right sidebar
 
-3. **Final Jeopardy**:
-   - Click "Final Jeopardy" when ready
+3. **Final RBL-pardy**:
+   - Click "Final RBL-pardy" when ready
    - Players with positive scores can wager
    - Review and grade answers
    - Game automatically calculates final scores
@@ -77,7 +77,7 @@ npm start
    - Your position in the buzz queue will be shown
    - Your score updates automatically
 
-3. **Final Jeopardy**:
+3. **Final RBL-pardy**:
    - Enter your wager (if eligible)
    - Submit your answer when the question is revealed
    - Wait for final results

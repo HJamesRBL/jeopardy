@@ -241,7 +241,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Jeopardy game server running on port ${PORT}`);
+  console.log(`RBL-pardy game server running on port ${PORT}`);
   console.log(`Presenter view: http://localhost:${PORT}`);
   console.log(`Player view: http://localhost:${PORT}/player`);
 });

@@ -1,7 +1,7 @@
 {
-  "name": "jeopardy-game",
+  "name": "rbl-pardy-game",
   "version": "1.0.0",
-  "description": "Interactive Jeopardy game for workshop presentations",
+  "description": "Interactive RBL-pardy game for workshop presentations",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",

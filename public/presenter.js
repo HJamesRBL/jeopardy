@@ -96,21 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { once: true });
 
-  // Add resize handler for category headers
+  // Simplified resize handler - just ensure proper text display
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
-      // Readjust all category headers on resize
+      // Re-apply text settings to all category headers on resize
       const categoryHeaders = document.querySelectorAll('.category-header');
       categoryHeaders.forEach(header => {
-        // Reset styles first
-        header.style.fontSize = '';
-        header.style.whiteSpace = '';
-        header.style.wordBreak = '';
-        header.style.hyphens = '';
-        header.classList.remove('adjusted');
-        // Readjust
         adjustCategoryFontSize(header);
       });
     }, 250); // Debounce resize events
@@ -147,35 +140,23 @@ function setupEventListeners() {
 }
 
 function adjustCategoryFontSize(element) {
-  // Get the container width to check for overflow
-  const containerWidth = element.offsetWidth;
+  // Simply set reasonable font size and allow natural word wrapping
+  // Don't try to force everything on one line
 
-  // Font size range (in rem)
-  let maxSize = 1;     // 1rem max
-  let minSize = 0.6;   // 0.6rem min
-  let currentSize = maxSize;
-  let step = 0.05;     // Adjustment step
+  // Set a readable font size
+  element.style.fontSize = '0.9rem';
 
-  // Set initial max size
-  element.style.fontSize = maxSize + 'rem';
+  // Allow text to wrap naturally at word boundaries
+  element.style.whiteSpace = 'normal';
+  element.style.wordBreak = 'normal'; // Only break at word boundaries
+  element.style.wordWrap = 'break-word'; // Wrap long words if needed
+  element.style.hyphens = 'manual'; // Only hyphenate where explicitly marked
 
-  // Check if text overflows
-  while (element.scrollWidth > containerWidth && currentSize > minSize) {
-    currentSize -= step;
-    element.style.fontSize = currentSize + 'rem';
-  }
+  // Ensure text is centered even when wrapped
+  element.style.textAlign = 'center';
+  element.style.lineHeight = '1.2';
 
-  // If we had to adjust, mark it and allow wrapping for very long text
-  if (currentSize < maxSize) {
-    element.classList.add('adjusted');
-
-    // If even at min size it's still too wide, allow wrapping
-    if (element.scrollWidth > containerWidth) {
-      element.style.whiteSpace = 'normal';
-      element.style.wordBreak = 'break-word';
-      element.style.hyphens = 'auto';
-    }
-  }
+  element.classList.add('adjusted');
 }
 
 function updateGameBoard() {

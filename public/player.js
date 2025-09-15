@@ -221,7 +221,7 @@ function showFinalJeopardy(state) {
 
   const isEligible = state.eligiblePlayers.some(p => p.playerId === socket.id);
   if (!isEligible) {
-    document.getElementById('wager-section').innerHTML = '<p>Sorry, you need a positive score to participate in Final Jeopardy.</p>';
+    document.getElementById('wager-section').innerHTML = '<p>Sorry, you need a positive score to participate in Final RBL-pardy.</p>';
   }
 }
 
