@@ -6,7 +6,7 @@ const multer = require('multer');
 const QRCode = require('qrcode');
 require('dotenv').config();
 
-const GameManager = require('./gameManager');
+const RoomManager = require('./roomManager');
 const QuestionLoader = require('./questionLoader');
 
 const app = express();
@@ -22,7 +22,8 @@ const PORT = process.env.PORT || 3000;
 
 const upload = multer({ dest: 'uploads/' });
 
-const gameManager = new GameManager(io);
+const roomManager = new RoomManager(io);
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -35,11 +36,45 @@ app.get('/player', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/player.html'));
 });
 
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/admin.html'));
+});
+
+app.post('/admin/auth', (req, res) => {
+  const { password } = req.body;
+  if (password === ADMIN_PASSWORD) {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ success: false, error: 'Invalid password' });
+  }
+});
+
+app.get('/admin/stats', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader !== `Bearer ${ADMIN_PASSWORD}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  res.json(roomManager.getAdminStats());
+});
+
+app.delete('/admin/room/:gameCode', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader !== `Bearer ${ADMIN_PASSWORD}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const { gameCode } = req.params;
+  const deleted = roomManager.deleteRoom(gameCode);
+  res.json({ success: deleted });
+});
+
 app.get('/qrcode', async (req, res) => {
   try {
+    const { gameCode } = req.query;
     const host = req.get('host');
     const protocol = req.protocol;
-    const playerUrl = `${protocol}://${host}/player`;
+    const playerUrl = gameCode
+      ? `${protocol}://${host}/player?game=${gameCode}`
+      : `${protocol}://${host}/player`;
     const qrCodeDataUrl = await QRCode.toDataURL(playerUrl, {
       width: 300,
       margin: 2,

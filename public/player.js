@@ -3,6 +3,7 @@ let playerData = null;
 let currentQuestion = null;
 let hasBuzzed = false;
 let canBuzz = false;
+let gameCode = null;
 
 socket.on('connect', () => {
   console.log('Connected to server');
@@ -97,6 +98,13 @@ socket.on('game-reset', () => {
 document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
 
+  // Check for game code in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlGameCode = urlParams.get('game');
+  if (urlGameCode) {
+    document.getElementById('game-code').value = urlGameCode.toUpperCase();
+  }
+
   document.addEventListener('click', () => {
     if (soundManager.context && soundManager.context.state === 'suspended') {
       soundManager.context.resume();
@@ -124,15 +132,23 @@ function setupEventListeners() {
 }
 
 function joinGame() {
+  const codeInput = document.getElementById('game-code');
   const nameInput = document.getElementById('player-name');
+  const code = codeInput.value.trim().toUpperCase();
   const name = nameInput.value.trim();
+
+  if (!code) {
+    document.getElementById('join-error').textContent = 'Please enter a game code';
+    return;
+  }
 
   if (!name) {
     document.getElementById('join-error').textContent = 'Please enter your name';
     return;
   }
 
-  socket.emit('player-join', name);
+  gameCode = code;
+  socket.emit('player-join', { playerName: name, gameCode: code });
 }
 
 function showGameScreen() {
@@ -142,10 +158,10 @@ function showGameScreen() {
 }
 
 function buzzIn() {
-  if (!canBuzz || hasBuzzed) return;
+  if (!canBuzz || hasBuzzed || !gameCode) return;
 
   hasBuzzed = true;
-  socket.emit('buzz');
+  socket.emit('buzz', gameCode);
   document.getElementById('buzzer').classList.add('buzzed');
   soundManager.play('buzz');
 
@@ -233,7 +249,7 @@ function submitWager() {
     return;
   }
 
-  socket.emit('final-jeopardy-wager', { wager: parseInt(wager) });
+  socket.emit('final-jeopardy-wager', { gameCode, wager: parseInt(wager) });
 }
 
 function submitFinalAnswer() {
@@ -244,7 +260,7 @@ function submitFinalAnswer() {
     return;
   }
 
-  socket.emit('final-jeopardy-answer', { answer });
+  socket.emit('final-jeopardy-answer', { gameCode, answer });
 }
 
 function startFinalTimer(seconds) {
@@ -261,7 +277,7 @@ function startFinalTimer(seconds) {
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       const answer = document.getElementById('final-answer').value || 'No answer';
-      socket.emit('final-jeopardy-answer', { answer });
+      socket.emit('final-jeopardy-answer', { gameCode, answer });
     }
 
     timeLeft--;

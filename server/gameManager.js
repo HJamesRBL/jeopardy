@@ -1,6 +1,7 @@
 class GameManager {
-  constructor(io) {
+  constructor(io, gameCode = null) {
     this.io = io;
+    this.gameCode = gameCode;
     this.presenterId = null;
     this.players = new Map();
     this.questions = [];

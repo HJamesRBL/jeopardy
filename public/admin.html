@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RBL-pardy Admin Dashboard</title>
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <div id="admin-app">
+    <div id="login-screen" class="auth-container">
+      <h1>RBL-PARDY Admin</h1>
+      <div class="auth-form">
+        <h2>Admin Login</h2>
+        <input type="password" id="admin-password" placeholder="Enter admin password">
+        <button id="login-btn" class="btn-primary">Login</button>
+        <div id="login-error" class="error-message"></div>
+      </div>
+    </div>
+
+    <div id="dashboard-screen" class="hidden">
+      <header class="admin-header">
+        <h1>RBL-PARDY Admin Dashboard</h1>
+        <div class="header-actions">
+          <span id="last-updated"></span>
+          <button id="refresh-btn" class="btn-secondary">🔄 Refresh</button>
+          <button id="logout-btn" class="btn-secondary">Logout</button>
+        </div>
+      </header>
+
+      <main class="admin-container">
+        <div class="admin-actions">
+          <button id="create-game-btn" class="btn-primary">🎮 Create New Game</button>
+          <button id="upload-questions-btn" class="btn-secondary">📁 Upload Questions</button>
+        </div>
+
+        <div class="stats-summary">
+          <div class="stat-card">
+            <h3>Active Games</h3>
+            <div class="stat-value" id="active-games-count">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Total Players</h3>
+            <div class="stat-value" id="total-players-count">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Room Capacity</h3>
+            <div class="stat-value" id="room-capacity">0/0</div>
+          </div>
+        </div>
+
+        <div class="games-section">
+          <h2>Active Game Rooms</h2>
+          <div id="games-list" class="games-grid">
+            <!-- Games will be populated here -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="confirm-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Confirm Delete</h3>
+        <p>Are you sure you want to delete game <span id="delete-game-code"></span>?</p>
+        <p>This will disconnect all players and cannot be undone.</p>
+        <div class="modal-actions">
+          <button id="confirm-delete" class="btn-danger">Delete Game</button>
+          <button id="cancel-delete" class="btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="upload-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Upload Questions</h3>
+        <p>Select a game to upload questions to:</p>
+        <select id="game-select">
+          <option value="">Select a game...</option>
+        </select>
+        <div style="margin-top: 20px;">
+          <input type="file" id="csv-file" accept=".csv">
+          <button id="use-default-btn" class="btn-secondary" style="margin-top: 10px;">Use Sample Questions</button>
+        </div>
+        <div id="upload-status" style="margin-top: 20px; color: #19A9FF;"></div>
+        <div class="modal-actions">
+          <button id="upload-submit" class="btn-primary">Upload</button>
+          <button id="upload-cancel" class="btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="game-created-modal" class="modal hidden">
+      <div class="modal-content" style="text-align: center;">
+        <h3 style="color: #5ec4b6;">Game Created Successfully!</h3>
+        <div style="margin: 30px 0;">
+          <p style="font-size: 1.2em;">Game Code:</p>
+          <div id="new-game-code" style="font-size: 3em; font-weight: bold; color: #19A9FF; letter-spacing: 4px; margin: 20px 0;"></div>
+        </div>
+        <p>Share this code with players or launch the presenter view</p>
+        <div class="modal-actions" style="justify-content: center;">
+          <button id="launch-game-btn" class="btn-primary">🚀 Launch Game</button>
+          <button id="close-created-modal" class="btn-secondary">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
