@@ -11,6 +11,7 @@ class GameManager {
     this.gameState = 'waiting';
     this.usedQuestions = new Set();
     this.questionTimer = null;
+    this.controlPlayerId = null; // Track who has control of the board
     this.finalJeopardy = {
       active: false,
       question: null,
@@ -63,7 +64,17 @@ class GameManager {
   }
 
   getPlayers() {
-    return Array.from(this.players.values());
+    const playersList = Array.from(this.players.values()).map(player => ({
+      ...player,
+      hasControl: player.id === this.controlPlayerId
+    }));
+
+    // Sort to put control player first
+    return playersList.sort((a, b) => {
+      if (a.hasControl) return -1;
+      if (b.hasControl) return 1;
+      return 0;
+    });
   }
 
   loadQuestions(questions) {
@@ -203,6 +214,8 @@ class GameManager {
     this.scores.set(playerId, currentScore + points);
 
     if (correct) {
+      // This player now has control of the board
+      this.controlPlayerId = playerId;
       this.clearBuzzQueue();
       this.currentQuestion = null;
       this.gameState = 'ready';
@@ -351,6 +364,7 @@ class GameManager {
     this.currentQuestion = null;
     this.buzzQueue = [];
     this.usedQuestions.clear();
+    this.controlPlayerId = null; // Clear control player on reset
     this.gameState = this.questions.length > 0 ? 'ready' : 'waiting';
     this.finalJeopardy = {
       active: false,

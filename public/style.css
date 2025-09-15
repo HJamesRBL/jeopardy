@@ -221,7 +221,7 @@ body::before {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: var(--spacing-sm) var(--spacing-xs);
   text-align: center;
-  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  font-size: 1rem; /* Default size, will be adjusted by JS */
   font-weight: 700;
   border-radius: var(--radius-md);
   text-transform: uppercase;
@@ -230,14 +230,18 @@ body::before {
   position: relative;
   overflow: hidden;
   animation: categorySlide 0.6s ease-out backwards;
-  word-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
+  white-space: nowrap; /* Prevent wrapping initially for measurement */
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 80px;
   line-height: 1.2;
+  transition: font-size 0.2s ease;
+}
+
+.category-header.adjusted {
+  white-space: normal; /* Allow wrapping after adjustment if needed */
+  word-break: break-word;
 }
 
 .category-header:nth-child(1) { animation-delay: 0.1s; }
@@ -410,6 +414,11 @@ body::before {
   background-clip: text;
 }
 
+#players-list {
+  display: flex;
+  flex-direction: column;
+}
+
 .player-item, .score-item {
   padding: var(--spacing-sm) var(--spacing-md);
   margin: var(--spacing-xs) 0;
@@ -421,6 +430,24 @@ body::before {
   border: 1px solid rgba(100, 126, 234, 0.2);
   transition: all var(--transition-fast);
   animation: slideInLeft 0.3s ease-out backwards;
+}
+
+.player-item.has-control {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+  font-weight: 600;
+  order: -1; /* Move to top */
+  animation: controlPulse 2s ease-in-out infinite;
+}
+
+@keyframes controlPulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+  }
 }
 
 @keyframes slideInLeft {
@@ -992,10 +1019,10 @@ body::before {
   }
 
   .category-header {
-    font-size: 0.7rem;
     padding: var(--spacing-xs);
     min-height: 60px;
     letter-spacing: 0.02em;
+    /* Font size will be dynamically adjusted by JS */
   }
 
   .question-cell {

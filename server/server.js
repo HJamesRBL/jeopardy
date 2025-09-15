@@ -83,8 +83,11 @@ io.on('connection', (socket) => {
 
   socket.on('presenter-connect', () => {
     gameManager.setPresenter(socket.id);
-    socket.emit('game-state', gameManager.getGameState());
+    // Always send the current game state when presenter connects/reconnects
+    const currentState = gameManager.getGameState();
+    socket.emit('game-state', currentState);
     socket.emit('players-update', gameManager.getPlayers());
+    console.log('Presenter connected, sending game state with used questions:', currentState.usedQuestions);
   });
 
   socket.on('player-join', (playerName) => {
@@ -105,6 +108,8 @@ io.on('connection', (socket) => {
       const question = gameManager.selectQuestion(data.category, data.value);
       if (question) {
         io.emit('question-selected', question);
+        // Send updated game state to mark question as used immediately
+        io.emit('game-state', gameManager.getGameState());
         // Timer now starts only when someone buzzes in
       }
     }
@@ -134,6 +139,11 @@ io.on('connection', (socket) => {
         scores: gameManager.getScores()
       });
 
+      // Send updated players list with control player info
+      if (correct) {
+        io.emit('players-update', gameManager.getPlayers());
+      }
+
       if (!correct && gameManager.getBuzzQueue().length > 0) {
         const nextPlayer = gameManager.getNextBuzzer();
         if (nextPlayer) {
@@ -147,6 +157,8 @@ io.on('connection', (socket) => {
       } else {
         gameManager.clearBuzzQueue();
         io.emit('question-complete');
+        // Send updated game state so clients know which questions are used
+        io.emit('game-state', gameManager.getGameState());
       }
     }
   });

@@ -53,8 +53,8 @@ socket.on('scores-updated', (scores) => {
 
 socket.on('question-complete', () => {
   closeQuestionModal();
-  updateGameBoard();
   stopTimer();
+  // Game board will be updated when we receive the game-state event
 });
 
 socket.on('answer-time-up', () => {
@@ -95,6 +95,26 @@ document.addEventListener('DOMContentLoaded', () => {
       soundManager.context.resume();
     }
   }, { once: true });
+
+  // Add resize handler for category headers
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      // Readjust all category headers on resize
+      const categoryHeaders = document.querySelectorAll('.category-header');
+      categoryHeaders.forEach(header => {
+        // Reset styles first
+        header.style.fontSize = '';
+        header.style.whiteSpace = '';
+        header.style.wordBreak = '';
+        header.style.hyphens = '';
+        header.classList.remove('adjusted');
+        // Readjust
+        adjustCategoryFontSize(header);
+      });
+    }, 250); // Debounce resize events
+  });
 });
 
 function setupEventListeners() {
@@ -126,6 +146,38 @@ function setupEventListeners() {
   });
 }
 
+function adjustCategoryFontSize(element) {
+  // Get the container width to check for overflow
+  const containerWidth = element.offsetWidth;
+
+  // Font size range (in rem)
+  let maxSize = 1;     // 1rem max
+  let minSize = 0.6;   // 0.6rem min
+  let currentSize = maxSize;
+  let step = 0.05;     // Adjustment step
+
+  // Set initial max size
+  element.style.fontSize = maxSize + 'rem';
+
+  // Check if text overflows
+  while (element.scrollWidth > containerWidth && currentSize > minSize) {
+    currentSize -= step;
+    element.style.fontSize = currentSize + 'rem';
+  }
+
+  // If we had to adjust, mark it and allow wrapping for very long text
+  if (currentSize < maxSize) {
+    element.classList.add('adjusted');
+
+    // If even at min size it's still too wide, allow wrapping
+    if (element.scrollWidth > containerWidth) {
+      element.style.whiteSpace = 'normal';
+      element.style.wordBreak = 'break-word';
+      element.style.hyphens = 'auto';
+    }
+  }
+}
+
 function updateGameBoard() {
   const boardElement = document.getElementById('game-board');
 
@@ -147,6 +199,9 @@ function updateGameBoard() {
     categoryHeader.className = 'category-header';
     categoryHeader.textContent = category;
     boardElement.appendChild(categoryHeader);
+
+    // Adjust font size after adding to DOM
+    setTimeout(() => adjustCategoryFontSize(categoryHeader), 10);
   });
 
   const values = [200, 400, 600, 800, 1000];
@@ -274,8 +329,11 @@ function updatePlayersList(players) {
   playerCountElement.textContent = players.length;
 
   playersListElement.innerHTML = players.map(player => `
-    <div class="player-item">
-      <span>${player.name}</span>
+    <div class="player-item ${player.hasControl ? 'has-control' : ''}">
+      <span>
+        ${player.hasControl ? '👑 ' : ''}${player.name}
+        ${player.hasControl ? ' (Control)' : ''}
+      </span>
       <span class="player-status"></span>
     </div>
   `).join('');
