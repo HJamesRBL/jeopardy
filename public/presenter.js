@@ -145,7 +145,7 @@ function adjustCategoryFontSize(element) {
 
   // Set small font sizes to ensure text fits
   const isFullscreen = document.body.classList.contains('fullscreen-mode');
-  element.style.fontSize = isFullscreen ? '0.8rem' : '0.65rem';
+  element.style.fontSize = isFullscreen ? '0.7rem' : '0.55rem';
 
   // Allow aggressive text breaking for very long words
   element.style.whiteSpace = 'normal';
@@ -154,14 +154,14 @@ function adjustCategoryFontSize(element) {
   element.style.hyphens = 'auto'; // Auto hyphenation
 
   // Tight line height and letter spacing
-  element.style.lineHeight = '1.1';
-  element.style.letterSpacing = '-0.02em';
+  element.style.lineHeight = '1.05';
+  element.style.letterSpacing = '-0.03em';
 
   // Ensure text is centered
   element.style.textAlign = 'center';
 
   // Reduced padding for more text room
-  element.style.padding = '0.3rem 0.2rem';
+  element.style.padding = '0.3rem 0.15rem';
 
   element.classList.add('adjusted');
 }

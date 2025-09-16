@@ -229,13 +229,13 @@ body::before {
 
 .category-header {
   background: linear-gradient(135deg, #0086D6 0%, #19A9FF 100%);
-  padding: 0.3rem 0.2rem;
+  padding: 0.3rem 0.15rem;
   text-align: center;
-  font-size: 0.65rem; /* Much smaller for long text */
+  font-size: 0.55rem; /* Even smaller to ensure fit */
   font-weight: 700;
   border-radius: var(--radius-md);
   text-transform: uppercase;
-  letter-spacing: -0.02em; /* Negative spacing to compress */
+  letter-spacing: -0.03em; /* More compression */
   box-shadow: 0 10px 30px rgba(0, 134, 214, 0.3);
   position: relative;
   overflow: hidden;
@@ -1031,11 +1031,11 @@ body::before {
   }
 
   .category-header {
-    padding: 0.25rem 0.15rem;
+    padding: 0.25rem 0.1rem;
     min-height: 60px;
-    letter-spacing: -0.01em;
-    font-size: 0.6rem;
-    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-size: 0.5rem;
+    line-height: 1.05;
     /* Font size will be dynamically adjusted by JS */
   }
 
@@ -1122,11 +1122,11 @@ body::before {
 }
 
 .fullscreen-mode .category-header {
-  font-size: 0.8rem !important; /* Smaller for fullscreen too */
+  font-size: 0.7rem !important; /* Smaller for fullscreen too */
   min-height: 100px;
-  padding: 0.5rem 0.3rem;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
+  padding: 0.5rem 0.25rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .fullscreen-mode .players-section,
