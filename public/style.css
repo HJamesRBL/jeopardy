@@ -231,11 +231,11 @@ body::before {
   background: linear-gradient(135deg, #0086D6 0%, #19A9FF 100%);
   padding: var(--spacing-sm) var(--spacing-xs);
   text-align: center;
-  font-size: 0.9rem; /* Readable default size */
+  font-size: 0.85rem; /* Reduced for better fit */
   font-weight: 700;
   border-radius: var(--radius-md);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   box-shadow: 0 10px 30px rgba(0, 134, 214, 0.3);
   position: relative;
   overflow: hidden;
