@@ -1118,6 +1118,13 @@ body::before {
   gap: var(--spacing-md);
 }
 
+.fullscreen-mode .category-header {
+  font-size: 1.4rem !important; /* Larger font for fullscreen mode */
+  min-height: 100px;
+  padding: var(--spacing-md) var(--spacing-sm);
+  letter-spacing: 0.08em;
+}
+
 .fullscreen-mode .players-section,
 .fullscreen-mode .scores-section {
   flex: 1;

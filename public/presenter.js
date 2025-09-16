@@ -144,8 +144,9 @@ function adjustCategoryFontSize(element) {
   // Simply set reasonable font size and allow natural word wrapping
   // Don't try to force everything on one line
 
-  // Set a readable font size
-  element.style.fontSize = '0.9rem';
+  // Set a readable font size - larger in fullscreen mode
+  const isFullscreen = document.body.classList.contains('fullscreen-mode');
+  element.style.fontSize = isFullscreen ? '1.4rem' : '0.9rem';
 
   // Allow text to wrap naturally at word boundaries
   element.style.whiteSpace = 'normal';
@@ -452,6 +453,12 @@ function toggleGameMode() {
         hint.style.animation = 'fadeInOut 5s ease-in-out';
       }, 10);
     }
+
+    // Re-adjust category font sizes for fullscreen mode
+    const categoryHeaders = document.querySelectorAll('.category-header');
+    categoryHeaders.forEach(header => {
+      adjustCategoryFontSize(header);
+    });
   } else {
     // Exit fullscreen mode
     exitGameMode();
@@ -469,6 +476,12 @@ function exitGameMode() {
   } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
   }
+
+  // Re-adjust category font sizes for normal mode
+  const categoryHeaders = document.querySelectorAll('.category-header');
+  categoryHeaders.forEach(header => {
+    adjustCategoryFontSize(header);
+  });
 }
 
 // Keyboard shortcuts
