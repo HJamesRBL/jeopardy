@@ -1119,10 +1119,10 @@ body::before {
 }
 
 .fullscreen-mode .category-header {
-  font-size: 1.4rem !important; /* Larger font for fullscreen mode */
+  font-size: 1.05rem !important; /* Adjusted for better fit */
   min-height: 100px;
   padding: var(--spacing-md) var(--spacing-sm);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
 }
 
 .fullscreen-mode .players-section,
