@@ -562,11 +562,32 @@ body::before {
   border: 1px solid var(--border-color);
   width: 90%;
   max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
   border-radius: var(--radius-lg);
   position: relative;
   text-align: center;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
   animation: modalSlide 0.4s ease-out;
+}
+
+/* Custom scrollbar for modal */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: rgba(25, 169, 255, 0.3);
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(25, 169, 255, 0.5);
 }
 
 @keyframes modalSlide {
@@ -605,7 +626,9 @@ body::before {
 }
 
 .question-display {
-  min-height: 500px;
+  min-height: 400px;
+  max-height: 70vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -649,6 +672,9 @@ body::before {
   margin: var(--spacing-xl);
   font-weight: 500;
   animation: fadeInUp 0.5s ease-out 0.2s both;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 @keyframes fadeInUp {
@@ -1046,8 +1072,10 @@ body::before {
 
   .modal-content {
     width: 95%;
-    margin: 10% auto;
+    margin: 5% auto;
     padding: var(--spacing-md);
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   #question-text {
