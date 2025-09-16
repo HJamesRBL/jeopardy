@@ -185,6 +185,7 @@ io.on('connection', (socket) => {
 
       socket.emit('player-joined', player);
       io.to(`game-${gameCode}`).emit('players-update', room.gameManager.getPlayers());
+      io.to(`game-${gameCode}`).emit('scores-updated', room.gameManager.getScores());
 
       if (room.gameManager.presenterId) {
         io.to(room.gameManager.presenterId).emit('player-connected', player);
@@ -367,6 +368,7 @@ io.on('connection', (socket) => {
         if (player) {
           io.to(`game-${socket.gameCode}`).emit('player-disconnected', player);
           io.to(`game-${socket.gameCode}`).emit('players-update', room.gameManager.getPlayers());
+          io.to(`game-${socket.gameCode}`).emit('scores-updated', room.gameManager.getScores());
         }
       }
     }

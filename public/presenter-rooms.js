@@ -42,7 +42,9 @@ socket.on('game-created', (data) => {
 socket.on('game-state', (state) => {
   gameState = state;
   updateGameBoard();
-  updateScores();
+  if (state.scores) {
+    updateScores(state.scores);
+  }
 });
 
 socket.on('players-update', (players) => {
@@ -79,6 +81,7 @@ socket.on('answer-processed', (data) => {
 });
 
 socket.on('scores-updated', (scores) => {
+  console.log('Scores updated:', scores);
   updateScores(scores);
 });
 
@@ -165,9 +168,7 @@ function showGameCode() {
 }
 
 function setupEventListeners() {
-  document.getElementById('upload-btn').addEventListener('click', showUploadModal);
   document.getElementById('qr-btn').addEventListener('click', showQRModal);
-  document.getElementById('final-jeopardy-btn').addEventListener('click', startFinalJeopardy);
   document.getElementById('reset-btn').addEventListener('click', resetGame);
   document.getElementById('game-mode-btn').addEventListener('click', toggleGameMode);
   document.getElementById('sound-toggle').addEventListener('click', () => {
@@ -175,7 +176,6 @@ function setupEventListeners() {
     document.getElementById('sound-toggle').textContent = enabled ? '🔊 Sound' : '🔇 Sound';
   });
 
-  document.getElementById('upload-submit').addEventListener('click', uploadQuestions);
   document.getElementById('show-answer').addEventListener('click', showAnswer);
   document.getElementById('correct-answer').addEventListener('click', () => processAnswer(true));
   document.getElementById('incorrect-answer').addEventListener('click', () => processAnswer(false));

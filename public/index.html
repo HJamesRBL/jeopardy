@@ -11,10 +11,8 @@
     <header class="game-header">
       <h1>RBL-PARDY!</h1>
       <div class="header-controls">
-        <button id="upload-btn" class="control-btn">Upload Questions</button>
         <button id="qr-btn" class="control-btn">Show QR Code</button>
         <button id="game-mode-btn" class="control-btn">🎮 Game Mode</button>
-        <button id="final-jeopardy-btn" class="control-btn">Final RBL-pardy</button>
         <button id="reset-btn" class="control-btn">Reset Game</button>
         <button id="sound-toggle" class="control-btn">🔊 Sound</button>
       </div>
@@ -29,15 +27,6 @@
       </div>
     </div>
 
-    <div id="upload-modal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Upload Questions CSV</h2>
-        <input type="file" id="csv-file" accept=".csv">
-        <button id="upload-submit">Upload</button>
-        <div id="upload-status"></div>
-      </div>
-    </div>
 
     <div id="question-modal" class="modal">
       <div class="modal-content question-display">
@@ -56,17 +45,6 @@
       </div>
     </div>
 
-    <div id="final-jeopardy-modal" class="modal">
-      <div class="modal-content">
-        <h2>Final RBL-pardy</h2>
-        <div id="final-category"></div>
-        <div id="final-question" class="hidden"></div>
-        <div id="final-wagers"></div>
-        <div id="final-answers"></div>
-        <button id="reveal-final-question" class="control-btn">Reveal Question</button>
-        <button id="start-final-timer" class="control-btn hidden">Start Timer</button>
-      </div>
-    </div>
 
     <main class="game-container">
       <div id="game-board" class="game-board">
