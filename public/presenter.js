@@ -143,9 +143,9 @@ function setupEventListeners() {
 function adjustCategoryFontSize(element) {
   // Aggressively size text to fit long category names
 
-  // Set small font sizes to ensure text fits
+  // Set different sizes for main page vs fullscreen
   const isFullscreen = document.body.classList.contains('fullscreen-mode');
-  element.style.fontSize = isFullscreen ? '0.7rem' : '0.55rem';
+  element.style.fontSize = isFullscreen ? '0.95rem' : '0.42rem';
 
   // Allow aggressive text breaking for very long words
   element.style.whiteSpace = 'normal';
@@ -153,15 +153,17 @@ function adjustCategoryFontSize(element) {
   element.style.overflowWrap = 'break-word'; // Alternative property for breaking
   element.style.hyphens = 'auto'; // Auto hyphenation
 
-  // Tight line height and letter spacing
-  element.style.lineHeight = '1.05';
-  element.style.letterSpacing = '-0.03em';
+  // Different spacing for main page vs fullscreen
+  const isFullscreen = document.body.classList.contains('fullscreen-mode');
+  element.style.lineHeight = isFullscreen ? '1.2' : '1.0';
+  element.style.letterSpacing = isFullscreen ? '0.02em' : '-0.05em';
 
   // Ensure text is centered
   element.style.textAlign = 'center';
 
-  // Reduced padding for more text room
-  element.style.padding = '0.3rem 0.15rem';
+  // Different padding for main page vs fullscreen
+  const isFullscreen = document.body.classList.contains('fullscreen-mode');
+  element.style.padding = isFullscreen ? '1rem 0.5rem' : '0.2rem 0.08rem';
 
   element.classList.add('adjusted');
 }
