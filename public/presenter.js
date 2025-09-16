@@ -146,7 +146,7 @@ function adjustCategoryFontSize(element) {
 
   // Set a readable font size - larger in fullscreen mode
   const isFullscreen = document.body.classList.contains('fullscreen-mode');
-  element.style.fontSize = isFullscreen ? '0.95rem' : '0.85rem';
+  element.style.fontSize = isFullscreen ? '0.9rem' : '0.75rem';
 
   // Allow text to wrap naturally at word boundaries
   element.style.whiteSpace = 'normal';

@@ -229,13 +229,13 @@ body::before {
 
 .category-header {
   background: linear-gradient(135deg, #0086D6 0%, #19A9FF 100%);
-  padding: var(--spacing-sm) var(--spacing-xs);
+  padding: var(--spacing-sm) 0.25rem;
   text-align: center;
-  font-size: 0.85rem; /* Reduced for better fit */
+  font-size: 0.75rem; /* Further reduced for long text */
   font-weight: 700;
   border-radius: var(--radius-md);
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   box-shadow: 0 10px 30px rgba(0, 134, 214, 0.3);
   position: relative;
   overflow: hidden;
@@ -1030,9 +1030,10 @@ body::before {
   }
 
   .category-header {
-    padding: var(--spacing-xs);
+    padding: var(--spacing-xs) 0.25rem;
     min-height: 60px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
+    font-size: 0.7rem;
     /* Font size will be dynamically adjusted by JS */
   }
 
