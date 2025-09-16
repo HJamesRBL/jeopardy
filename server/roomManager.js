@@ -8,7 +8,7 @@ class RoomManager {
     this.cleanupIntervalHours = process.env.ROOM_CLEANUP_HOURS || 4;
 
     // Start cleanup interval
-    this.startCleanupInterval();
+    // this.startCleanupInterval(); // Disabled automatic cleanup
   }
 
   generateGameCode(customName = null) {
