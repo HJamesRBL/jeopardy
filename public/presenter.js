@@ -118,7 +118,7 @@ function setupEventListeners() {
   document.getElementById('game-mode-btn').addEventListener('click', toggleGameMode);
   document.getElementById('sound-toggle').addEventListener('click', () => {
     const enabled = soundManager.toggle();
-    document.getElementById('sound-toggle').textContent = enabled ? '🔊 Sound' : '🔇 Sound';
+    document.getElementById('sound-toggle').textContent = enabled ? 'Sound On' : 'Sound Off';
   });
 
   document.getElementById('upload-submit').addEventListener('click', uploadQuestions);
