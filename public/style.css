@@ -231,7 +231,7 @@ body::before {
   background: linear-gradient(135deg, #0086D6 0%, #19A9FF 100%);
   padding: 0.2rem 0.08rem;
   text-align: center;
-  font-size: 0.42rem; /* Extra small for main page */
+  font-size: 0.9rem;
   font-weight: 700;
   border-radius: var(--radius-md);
   text-transform: uppercase;
@@ -1150,7 +1150,7 @@ body::before {
 }
 
 .fullscreen-mode .category-header {
-  font-size: 0.95rem !important; /* Readable size for fullscreen */
+  font-size: 1.2rem !important;
   min-height: 100px;
   padding: var(--spacing-md) var(--spacing-sm);
   letter-spacing: 0.02em;
