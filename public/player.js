@@ -18,9 +18,18 @@ socket.on('player-joined', (player) => {
 socket.on('daily-double-ready', (data) => {
   // Wager was submitted, now show the question
   if (currentQuestion) {
-    canBuzz = true;
+    // Only the control player (who wagered) can answer the daily double
+    const isControlPlayer = socket.id === currentQuestion.controlPlayerId;
+    canBuzz = isControlPlayer; // Only control player can buzz
     showQuestion(currentQuestion);
-    enableBuzzer();
+
+    if (isControlPlayer) {
+      enableBuzzer();
+    } else {
+      // Disable buzzer for non-control players
+      document.getElementById('buzzer').disabled = true;
+      document.getElementById('buzzer').textContent = 'Waiting...';
+    }
   }
 });
 
@@ -94,6 +103,11 @@ socket.on('question-complete', () => {
   hasBuzzed = false;
   document.getElementById('buzz-status').textContent = '';
   document.getElementById('buzzer').classList.remove('buzzed');
+  // Reset buzzer button text if it was changed for daily double
+  const buzzer = document.getElementById('buzzer');
+  if (buzzer.textContent !== 'BUZZ IN!') {
+    buzzer.textContent = 'BUZZ IN!';
+  }
 });
 
 socket.on('time-up', () => {

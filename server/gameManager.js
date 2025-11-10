@@ -123,6 +123,12 @@ class GameManager {
 
       // Check if this is a daily double
       if (question.isDaily) {
+        // If no one has control (start of game), pick the first player to give them control
+        if (!this.controlPlayerId && this.players.size > 0) {
+          const firstPlayer = Array.from(this.players.values())[0];
+          this.controlPlayerId = firstPlayer.id;
+        }
+
         this.gameState = 'daily-double-wager';
         this.dailyDoubleWager.active = true;
         this.dailyDoubleWager.playerId = this.controlPlayerId;
@@ -219,6 +225,11 @@ class GameManager {
 
   recordBuzz(playerId) {
     if (!this.currentQuestion || !this.players.has(playerId)) {
+      return null;
+    }
+
+    // During a daily double, only the control player can answer
+    if (this.dailyDoubleWager.active && playerId !== this.dailyDoubleWager.playerId) {
       return null;
     }
 
