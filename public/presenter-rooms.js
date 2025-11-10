@@ -62,7 +62,18 @@ socket.on('player-disconnected', (player) => {
 
 socket.on('question-selected', (question) => {
   currentQuestion = question;
-  showQuestionModal(question);
+  if (question.requiresWager) {
+    showDailyDoubleWagerPrompt(question);
+  } else {
+    showQuestionModal(question);
+  }
+});
+
+socket.on('daily-double-ready', (data) => {
+  // Wager was submitted, now show the full question
+  if (currentQuestion) {
+    showQuestionModal(currentQuestion);
+  }
 });
 
 socket.on('buzz-received', (data) => {
@@ -269,6 +280,26 @@ function selectQuestion(category, value) {
   socket.emit('select-question', { gameCode, category, value });
 }
 
+function showDailyDoubleWagerPrompt(question) {
+  const modal = document.getElementById('question-modal');
+  document.getElementById('question-category').textContent = question.category;
+  document.getElementById('question-value').textContent = `$${question.value}`;
+  document.getElementById('question-answer').classList.add('hidden');
+  document.getElementById('buzz-queue').innerHTML = '';
+  document.getElementById('timer-display').textContent = '';
+
+  soundManager.play('dailyDouble');
+
+  // Display the wager prompt
+  document.getElementById('question-text').innerHTML = `
+    <div style="color: #FFD700; font-size: 2em; margin-bottom: 30px; font-weight: bold;">DAILY DOUBLE!</div>
+    <p style="font-size: 1.3em; margin-bottom: 20px;">The player with control is placing their wager...</p>
+    <p style="font-size: 1.1em; color: #ccc;">Waiting for wager submission...</p>
+  `;
+
+  modal.style.display = 'block';
+}
+
 function showQuestionModal(question) {
   const modal = document.getElementById('question-modal');
   document.getElementById('question-category').textContent = question.category;
@@ -286,7 +317,8 @@ function showQuestionModal(question) {
       </div>
       ${question.question}
     `;
-    soundManager.play('daily');
+  } else {
+    soundManager.play('reveal');
   }
 
   modal.style.display = 'block';
