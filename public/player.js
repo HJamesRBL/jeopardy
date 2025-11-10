@@ -44,16 +44,18 @@ socket.on('join-error', (error) => {
 socket.on('question-selected', (question) => {
   currentQuestion = question;
   hasBuzzed = false;
-  canBuzz = false; // Don't allow buzzing during wager phase
 
   if (question.requiresWager && socket.id === question.controlPlayerId) {
     // This is the player with control - show wager prompt
+    canBuzz = false; // Don't allow buzzing during wager phase
     showDailyDoubleWagerPrompt(question);
   } else if (question.requiresWager) {
     // This is not the control player - show waiting message
+    canBuzz = false; // Don't allow buzzing during wager phase
     showDailyDoubleWaitingScreen(question);
   } else {
     // Normal question
+    canBuzz = true; // Enable buzzing for regular questions
     showQuestion(question);
     enableBuzzer();
   }
