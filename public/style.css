@@ -717,7 +717,7 @@ body::before {
   right: var(--spacing-lg);
   font-size: 3rem;
   font-weight: 800;
-  color: var(--rbl-navy);
+  color: #181d3c;
   font-family: 'Bebas Neue', sans-serif;
   animation: timerPulse 1s infinite;
 }
@@ -732,7 +732,7 @@ body::before {
 }
 
 #timer-display.warning {
-  color: #071D49;
+  color: #181d3c;
 }
 
 #buzz-queue {
