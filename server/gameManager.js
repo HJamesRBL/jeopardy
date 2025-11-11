@@ -124,7 +124,7 @@ class GameManager {
     return null;
   }
 
-  startAnswerTimer(duration = 10) {
+  startAnswerTimer(duration = 1000) {
     if (this.questionTimer) {
       clearTimeout(this.questionTimer);
     }
