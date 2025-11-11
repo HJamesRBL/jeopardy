@@ -246,10 +246,10 @@ class GameManager {
     this.buzzQueue.push(buzzEntry);
     this.buzzQueue.sort((a, b) => a.timestamp - b.timestamp);
 
-    // Start timer only for the first buzz
-    if (this.buzzQueue.length === 1) {
-      this.startAnswerTimer();
-    }
+    // Timer disabled - players can take as long as needed
+    // if (this.buzzQueue.length === 1) {
+    //   this.startAnswerTimer();
+    // }
 
     return buzzEntry.timestamp;
   }

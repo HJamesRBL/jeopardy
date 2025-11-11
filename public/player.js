@@ -127,7 +127,8 @@ socket.on('wager-accepted', (wager) => {
 socket.on('all-wagers-submitted', () => {
   document.getElementById('waiting-section').classList.add('hidden');
   document.getElementById('answer-section').classList.remove('hidden');
-  startFinalTimer(30);
+  // Timer disabled - players can take as long as needed
+  // startFinalTimer(30);
 });
 
 socket.on('answer-submitted', () => {

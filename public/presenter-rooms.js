@@ -81,8 +81,8 @@ socket.on('buzz-received', (data) => {
   if (data.position === 1) {
     selectedPlayer = data.playerId;
     soundManager.play('buzz');
-    // Start timer only when first person buzzes
-    startTimer(10);
+    // Timer disabled - players can take as long as needed
+    // startTimer(10);
   }
 });
 
@@ -118,7 +118,7 @@ socket.on('next-player-to-answer', (player) => {
   nextMsg.className = 'buzz-item';
   nextMsg.textContent = `${player.playerName} now has control`;
   queueElement.appendChild(nextMsg);
-  startTimer(10); // Start new timer for next player
+  // Timer disabled - startTimer(10); // Start new timer for next player
 });
 
 socket.on('reopen-buzzing', () => {
