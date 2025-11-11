@@ -13,12 +13,6 @@ class GameManager {
     this.usedQuestions = new Set();
     this.questionTimer = null;
     this.controlPlayerId = null; // Track who has control of the board
-    this.dailyDoubleWager = {
-      active: false,
-      playerId: null,
-      wager: null,
-      questionKey: null
-    };
     this.finalJeopardy = {
       active: false,
       question: null,
@@ -120,73 +114,14 @@ class GameManager {
       this.currentQuestion = question;
       this.usedQuestions.add(questionKey);
       this.buzzQueue = [];
-
-      // Check if this is a daily double
-      if (question.isDaily) {
-        // If no one has control (start of game), pick the first player to give them control
-        if (!this.controlPlayerId && this.players.size > 0) {
-          const firstPlayer = Array.from(this.players.values())[0];
-          this.controlPlayerId = firstPlayer.id;
-        }
-
-        this.gameState = 'daily-double-wager';
-        this.dailyDoubleWager.active = true;
-        this.dailyDoubleWager.playerId = this.controlPlayerId;
-        this.dailyDoubleWager.questionKey = questionKey;
-        return {
-          ...question,
-          questionKey,
-          requiresWager: true,
-          controlPlayerId: this.controlPlayerId
-        };
-      } else {
-        this.gameState = 'question-active';
-        return {
-          ...question,
-          questionKey
-        };
-      }
+      this.gameState = 'question-active';
+      return {
+        ...question,
+        questionKey
+      };
     }
 
     return null;
-  }
-
-  submitDailyDoubleWager(playerId, wagerAmount) {
-    // Validate it's the correct player and a wager is active
-    if (!this.dailyDoubleWager.active || playerId !== this.dailyDoubleWager.playerId) {
-      return false;
-    }
-
-    const playerScore = this.scores.get(playerId) || 0;
-    const maxWager = Math.max(playerScore, 1000); // Max of current score or $1000
-    const wager = parseInt(wagerAmount);
-
-    // Validate wager
-    if (isNaN(wager) || wager < 0 || wager > maxWager) {
-      return false;
-    }
-
-    // Store the wager
-    this.dailyDoubleWager.wager = wager;
-    this.gameState = 'question-active';
-    return true;
-  }
-
-  getDailyDoubleWagerState() {
-    if (!this.dailyDoubleWager.active) {
-      return null;
-    }
-
-    const playerId = this.dailyDoubleWager.playerId;
-    const playerScore = this.scores.get(playerId) || 0;
-    const maxWager = Math.max(playerScore, 1000);
-
-    return {
-      playerId,
-      playerName: this.players.get(playerId)?.name,
-      currentScore: playerScore,
-      maxWager
-    };
   }
 
   startAnswerTimer(duration = 10) {
@@ -228,11 +163,6 @@ class GameManager {
       return null;
     }
 
-    // During a daily double, only the control player can answer
-    if (this.dailyDoubleWager.active && playerId !== this.dailyDoubleWager.playerId) {
-      return null;
-    }
-
     const alreadyBuzzed = this.buzzQueue.some(b => b.playerId === playerId);
     if (alreadyBuzzed) {
       return null;
@@ -246,10 +176,10 @@ class GameManager {
     this.buzzQueue.push(buzzEntry);
     this.buzzQueue.sort((a, b) => a.timestamp - b.timestamp);
 
-    // Timer disabled - players can take as long as needed
-    // if (this.buzzQueue.length === 1) {
-    //   this.startAnswerTimer();
-    // }
+    // Start timer only for the first buzz
+    if (this.buzzQueue.length === 1) {
+      this.startAnswerTimer();
+    }
 
     return buzzEntry.timestamp;
   }
@@ -280,29 +210,9 @@ class GameManager {
     // Stop the timer when processing an answer
     this.stopTimer();
 
-    let points = correct ? this.currentQuestion.value : -this.currentQuestion.value;
-
-    // Apply daily double wager multiplier if applicable
-    if (this.dailyDoubleWager.active && this.dailyDoubleWager.wager !== null) {
-      if (correct) {
-        // For correct answer, add the wager amount
-        points = this.dailyDoubleWager.wager;
-      } else {
-        // For incorrect answer, subtract the wager amount
-        points = -this.dailyDoubleWager.wager;
-      }
-    }
-
+    const points = correct ? this.currentQuestion.value : -this.currentQuestion.value;
     const currentScore = this.scores.get(playerId) || 0;
     this.scores.set(playerId, currentScore + points);
-
-    // Clear daily double wager state
-    if (this.dailyDoubleWager.active) {
-      this.dailyDoubleWager.active = false;
-      this.dailyDoubleWager.playerId = null;
-      this.dailyDoubleWager.wager = null;
-      this.dailyDoubleWager.questionKey = null;
-    }
 
     if (correct) {
       // This player now has control of the board
@@ -456,12 +366,6 @@ class GameManager {
     this.buzzQueue = [];
     this.usedQuestions.clear();
     this.controlPlayerId = null; // Clear control player on reset
-    this.dailyDoubleWager = {
-      active: false,
-      playerId: null,
-      wager: null,
-      questionKey: null
-    };
     this.gameState = this.questions.length > 0 ? 'ready' : 'waiting';
     this.finalJeopardy = {
       active: false,
@@ -490,8 +394,7 @@ class GameManager {
       scores: this.getScores(),
       buzzQueue: this.getBuzzQueue(),
       playerCount: this.players.size,
-      finalJeopardy: this.finalJeopardy.active,
-      dailyDoubleWager: this.dailyDoubleWager.active ? this.getDailyDoubleWagerState() : null
+      finalJeopardy: this.finalJeopardy.active
     };
   }
 

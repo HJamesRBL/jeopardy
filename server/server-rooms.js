@@ -289,24 +289,6 @@ io.on('connection', (socket) => {
     io.to(`game-${gameCode}`).emit('final-jeopardy-started', room.gameManager.getFinalJeopardyState());
   });
 
-  socket.on('daily-double-wager', ({ gameCode, wager }) => {
-    const room = roomManager.getRoom(gameCode);
-
-    if (!room) return;
-
-    if (room.gameManager.submitDailyDoubleWager(socket.id, wager)) {
-      socket.emit('wager-accepted', wager);
-      // Notify all players that the wager was accepted and question is ready
-      io.to(`game-${gameCode}`).emit('daily-double-ready', {
-        playerId: socket.id,
-        wager
-      });
-      io.to(`game-${gameCode}`).emit('game-state', room.gameManager.getGameState());
-    } else {
-      socket.emit('wager-error', 'Invalid wager amount');
-    }
-  });
-
   socket.on('final-jeopardy-wager', ({ gameCode, wager }) => {
     const room = roomManager.getRoom(gameCode);
 

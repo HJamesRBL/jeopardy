@@ -11,39 +11,7 @@ socket.on('connect', () => {
 
 socket.on('player-joined', (player) => {
   playerData = player;
-  playerData.controlPlayerId = null; // Will be updated by scores-updated or players-update events
   showGameScreen();
-});
-
-socket.on('daily-double-ready', (data) => {
-  // Wager was submitted, now show the question
-  if (currentQuestion) {
-    // Only the control player (who wagered) can answer the daily double
-    const isControlPlayer = socket.id === currentQuestion.controlPlayerId;
-    canBuzz = isControlPlayer; // Only control player can buzz
-    showQuestion(currentQuestion);
-
-    if (isControlPlayer) {
-      enableBuzzer();
-    } else {
-      // Disable buzzer for non-control players
-      document.getElementById('buzzer').disabled = true;
-      document.getElementById('buzzer').textContent = 'Waiting...';
-    }
-  }
-});
-
-socket.on('wager-error', (error) => {
-  alert('Wager error: ' + error);
-  // Re-enable the input and button
-  const wagerInput = document.getElementById('daily-double-wager-input');
-  if (wagerInput) {
-    wagerInput.disabled = false;
-  }
-  const submitBtn = document.getElementById('submit-daily-wager');
-  if (submitBtn) {
-    submitBtn.disabled = false;
-  }
 });
 
 socket.on('join-error', (error) => {
@@ -53,21 +21,9 @@ socket.on('join-error', (error) => {
 socket.on('question-selected', (question) => {
   currentQuestion = question;
   hasBuzzed = false;
-
-  if (question.requiresWager && socket.id === question.controlPlayerId) {
-    // This is the player with control - show wager prompt
-    canBuzz = false; // Don't allow buzzing during wager phase
-    showDailyDoubleWagerPrompt(question);
-  } else if (question.requiresWager) {
-    // This is not the control player - show waiting message
-    canBuzz = false; // Don't allow buzzing during wager phase
-    showDailyDoubleWaitingScreen(question);
-  } else {
-    // Normal question
-    canBuzz = true; // Enable buzzing for regular questions
-    showQuestion(question);
-    enableBuzzer();
-  }
+  canBuzz = true;
+  showQuestion(question);
+  enableBuzzer();
 });
 
 socket.on('buzz-received', (data) => {
@@ -103,11 +59,6 @@ socket.on('question-complete', () => {
   hasBuzzed = false;
   document.getElementById('buzz-status').textContent = '';
   document.getElementById('buzzer').classList.remove('buzzed');
-  // Reset buzzer button text if it was changed for daily double
-  const buzzer = document.getElementById('buzzer');
-  if (buzzer.textContent !== 'BUZZ IN!') {
-    buzzer.textContent = 'BUZZ IN!';
-  }
 });
 
 socket.on('time-up', () => {
@@ -127,8 +78,7 @@ socket.on('wager-accepted', (wager) => {
 socket.on('all-wagers-submitted', () => {
   document.getElementById('waiting-section').classList.add('hidden');
   document.getElementById('answer-section').classList.remove('hidden');
-  // Timer disabled - players can take as long as needed
-  // startFinalTimer(30);
+  startFinalTimer(30);
 });
 
 socket.on('answer-submitted', () => {
@@ -173,17 +123,8 @@ function setupEventListeners() {
   document.getElementById('submit-wager').addEventListener('click', submitWager);
   document.getElementById('submit-answer').addEventListener('click', submitFinalAnswer);
 
-  // Allow wager submission with Enter/Space key for daily doubles
   document.addEventListener('keydown', (e) => {
-    const wagerInput = document.getElementById('daily-double-wager-input');
-    const isWagerInputVisible = wagerInput && wagerInput.offsetParent !== null; // Check if element is visible
-
-    if (isWagerInputVisible) {
-      if (e.key === 'Enter' || e.code === 'Space') {
-        e.preventDefault();
-        submitDailyDoubleWager();
-      }
-    } else if (e.code === 'Space' && canBuzz && !hasBuzzed) {
+    if (e.code === 'Space' && canBuzz && !hasBuzzed) {
       e.preventDefault();
       buzzIn();
     }
@@ -230,53 +171,6 @@ function buzzIn() {
 function enableBuzzer() {
   document.getElementById('buzzer').disabled = false;
   document.getElementById('buzzer').classList.remove('buzzed');
-}
-
-function showDailyDoubleWagerPrompt(question) {
-  const questionDisplay = document.getElementById('question-display');
-  document.getElementById('current-category').textContent = question.category;
-  document.getElementById('current-value').textContent = `$${question.value}`;
-
-  const currentScore = parseInt(document.getElementById('player-score').textContent) || 0;
-  const maxWager = Math.max(currentScore, 1000);
-
-  // Show the wager input form
-  document.getElementById('current-question').innerHTML = `
-    <div style="color: #FFD700; font-size: 1.5em; margin-bottom: 30px; font-weight: bold;">DAILY DOUBLE!</div>
-    <p style="font-size: 1.2em; margin-bottom: 20px;">Your current score: $${currentScore}</p>
-    <p style="font-size: 1.1em; margin-bottom: 20px;">
-      Max wager: $${maxWager}
-    </p>
-    <div style="margin-bottom: 20px;">
-      <input type="number" id="daily-double-wager-input" min="0" max="${maxWager}" value="${currentScore}"
-             style="font-size: 1.2em; padding: 10px; width: 200px;">
-      <button id="submit-daily-wager" class="buzzer-btn" style="margin-left: 10px; padding: 10px 20px; font-size: 1.1em;">Submit Wager</button>
-      <p style="font-size: 0.9em; color: #ccc; margin-top: 10px;">Press Enter or click Submit to confirm</p>
-    </div>
-  `;
-
-  // Add click listener to the submit button
-  setTimeout(() => {
-    const submitBtn = document.getElementById('submit-daily-wager');
-    if (submitBtn) {
-      submitBtn.addEventListener('click', submitDailyDoubleWager);
-    }
-  }, 0);
-
-  questionDisplay.classList.remove('hidden');
-}
-
-function showDailyDoubleWaitingScreen(question) {
-  const questionDisplay = document.getElementById('question-display');
-  document.getElementById('current-category').textContent = question.category;
-  document.getElementById('current-value').textContent = `$${question.value}`;
-
-  document.getElementById('current-question').innerHTML = `
-    <div style="color: #FFD700; font-size: 1.5em; margin-bottom: 30px; font-weight: bold;">DAILY DOUBLE!</div>
-    <p style="font-size: 1.2em; margin-bottom: 20px;">Waiting for the player with control to place their wager...</p>
-  `;
-
-  questionDisplay.classList.remove('hidden');
 }
 
 function showQuestion(question) {
@@ -345,34 +239,6 @@ function showFinalJeopardy(state) {
   if (!isEligible) {
     document.getElementById('wager-section').innerHTML = '<p>Sorry, you need a positive score to participate in Final RBL-pardy.</p>';
   }
-}
-
-function submitDailyDoubleWager() {
-  const wagerInput = document.getElementById('daily-double-wager-input');
-  if (!wagerInput) return;
-
-  const wager = parseInt(wagerInput.value);
-  const currentScore = parseInt(document.getElementById('player-score').textContent) || 0;
-  const maxWager = Math.max(currentScore, 1000);
-
-  if (isNaN(wager)) {
-    alert('Please enter a valid wager amount');
-    wagerInput.focus();
-    return;
-  }
-
-  if (wager < 0 || wager > maxWager) {
-    alert(`Wager must be between $0 and $${maxWager}`);
-    wagerInput.focus();
-    return;
-  }
-
-  // Disable input and button during submission
-  wagerInput.disabled = true;
-  const submitBtn = document.getElementById('submit-daily-wager');
-  if (submitBtn) submitBtn.disabled = true;
-
-  socket.emit('daily-double-wager', { gameCode, wager });
 }
 
 function submitWager() {
